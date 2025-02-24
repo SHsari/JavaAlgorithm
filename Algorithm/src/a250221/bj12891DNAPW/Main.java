@@ -10,15 +10,13 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
 	static int S, P;
-	static final char[] charList = {'A','C','T','G'};
+	static final Map<Character, Integer> DNAIDX = Map.of('A', 1, 'C', 2, 'G', 3, 'T', 4);
 	
 	public static void main(String[] args) throws IOException {
 		StringTokenizer sp = new StringTokenizer(br.readLine());
 		
 		Map<Character, Integer> dnaMap = new HashMap<>();
-		for(char c : charList) {
-			dnaMap.put(c, 0);
-		}
+
 		
 		S = Integer.parseInt(sp.nextToken());
 		P = Integer.parseInt(sp.nextToken());
