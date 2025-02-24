@@ -1,24 +1,26 @@
-package a250220.swea5215Hamburger;
+package a250221.swea5215Hamburger;
 import java.io.*;
 import java.util.StringTokenizer;
-
+import java.util.Map;
 
 /*
  * SWEA 5215. 햄버거 다이어트
+ * 부분집합에 프루닝 적용해보자
  * 
  * T : testCase
- * N : 재료의 수 ( 1 <= N <= 20 )
+ * N : 재료의 수 ( 1 <= N <= 20 
  * L : 제한 칼로리 ( 1 <= L <= 10^4 )
  * 
  * Ti : 만족도 
  * Ki : 칼로리
  * 
- * 전형적인 knapSack problem 인가부다
+ * 부분집합으로 풀어보자.
  * 
- * 조합으로 풀되 프루닝을 적극적으로 사용해보자
  */
 
 public class Solution {
+	
+	static Map<Integer, Integer> calUtilMap;
 	
 	static int N, MAXCAL;
 	
@@ -34,11 +36,11 @@ public class Solution {
 	static int[] utilities;  // 1000 이하
 	static int[] calories;	 // 1000 이하
 	
-	
+	static StringBuilder sb;
+
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringBuilder sb = new StringBuilder();
-		
+		sb = new StringBuilder();
 		int T = Integer.parseInt(br.readLine());
 		
 		for(int tc=1; tc<=T; tc++) {
@@ -99,68 +101,54 @@ public class Solution {
 	// false return시 더 이상 탐색할 필요가 없음
 	// true return시 일반적으로 진행한다.
 
-	static boolean findCombination(int start){
+	static void findCombination(int depth){
 
-		// 최고깊이에 도달했을 때
-		if(start==N) {
+		// 마지막 선택 +1에 도달
+		if(depth==N) {
 			updateMaxUtil();
-			return true;
+			return;
 		}
 		
-		// 남아있는 Calorie 가 너무 적어 어떤것도 추가선택이 불가능 할 때,
-		if(calories[N-1]+calSum > MAXCAL) {
+		else if(MAXCAL < calSum) {
+			return;
+		}
+		
+		// 여유 칼로리가 너무 적어 어떤 재료도 추가 불가능
+		else if(MAXCAL-calSum < calories[N-1]) {
 			updateMaxUtil();
-			return true;
+			return;
+		}
+		// 남은걸 다 사용해도 이전 최고값을 갱신하지 못할 때 {
+		else if(utilSum + remUtil < maxUtilScore) {
+			return;
 		}
 
-		// 남은것을 모두 선택해도 이전 최고값을 갱신할 수 없을 때
-		if(utilSum + remUtil < maxUtilScore) {
-			return false;
-		}
-
-
-		// 남은 선택지를 모두 선택해도 제한값을 만족하는 경우
-		if(calSum + remCal <= MAXCAL) {
+		// 남은걸 다 사용해도 제한 칼로리 안일 때
+		else if(calSum + remCal <= MAXCAL) {
 			utilSum += remUtil;
 			updateMaxUtil();
 			utilSum -= remUtil;
-			// calories를 내림차순 정렬을 했으므로.
-			// 이후에 발생하는 재귀가 의미가 없어지는데..??
-			return false;
+			return;
 		}
 
-		boolean needFurtherSearch = true;
-		int idx;
-		// 위의 상황이 만족하지 않아서 추가 탐색이 필요한 경우
-		for(idx=start; idx<N; idx++) {
-			remUtil -= utilities[idx];
-			remCal -= calories[idx];
+		remCal -= calories[depth];
+		remUtil -= utilities[depth];
 
-			utilSum += utilities[idx];
-			calSum += calories[idx];
-			
-			//여기서부터 업데이트 로직 블럭
-			if(calSum<=MAXCAL) { //제한값을 넘지 않았을 때
-				needFurtherSearch = findCombination(idx+1);
-				utilSum-=utilities[idx];
-				calSum-=calories[idx];
-			} else { //제한값 보다 클 때
-				calSum -= calories[idx];
-				utilSum -= utilities[idx];
-				updateMaxUtil();
-			}
-			//원복 등 완료하고 추가 탐색여부 확인
-			if(!needFurtherSearch) {
-				idx++;
-				break;
-			}
-		}
+		// 선택할 때
+		calSum += calories[depth];
+		utilSum += utilities[depth];
+		findCombination(depth+1);
+		utilSum -= utilities[depth];
 
-		for(int i=start; i<idx; i++) {
-			remUtil += utilities[i];
-			remCal += calories[i];
-		}
-		return true;
+		calSum -= calories[depth];
+
+		//		
+		//선택하지 않을 때
+		findCombination(depth+1);
+
+		remCal += calories[depth];
+		remUtil += utilities[depth];
+
 	}
 
 	static void updateMaxUtil() {
@@ -172,7 +160,8 @@ public class Solution {
 	static void quickSort(int start, int end) {
 		if(start>=end) return;
 
-		int poleIndex = (int)(Math.random() * (end-start+0.9)) + start;
+		int poleIndex = (int)(Math.random() * (end-start+1)) + start;
+
 		swap(poleIndex, end);
 		int pole = calories[end];
 		int idxL=start;
@@ -182,9 +171,10 @@ public class Solution {
 				swap(idxL++, i);
 			}
 			else if(calories[i] < pole) {
-				swap(i--, idxR--);
+				swap(idxR--, i--);
 			}
 		}
+		
 		quickSort(start, idxL-1);
 		quickSort(idxR+1, end);
 	}
