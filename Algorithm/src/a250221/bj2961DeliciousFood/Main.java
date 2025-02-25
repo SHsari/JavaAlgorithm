@@ -9,8 +9,6 @@ public class Main {
 	static int[] sour;
 	static int[] bitter;
 	
-	static int sourMul;
-	static int bitterSum;
 	static int minDiff;
 	
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -20,8 +18,6 @@ public class Main {
 		N = Integer.parseInt(br.readLine());
 		sour = new int[N];
 		bitter = new int[N];
-		sourMul =1;
-		bitterSum=0;
 		minDiff = Integer.MAX_VALUE;
 		
 		for(int i=0; i<N; i++) {
@@ -29,29 +25,28 @@ public class Main {
 			sour[i] = Integer.parseInt(line.nextToken());
 			bitter[i] = Integer.parseInt(line.nextToken());
 		}
-		combination(0);
+		combination(0, 1, 0);
 		System.out.println(minDiff);
 	}	
 	
-	static void combination(int start) {
+	static void combination(int start, int curSour, int curBitter) {
 		if(start==N) {
 			return ;
 		}
 		
 		for(int idx = start; idx<N; idx ++) {
-			sourMul*=sour[idx];
-			bitterSum+=bitter[idx];
-			int result = Math.abs(sourMul-bitterSum);
+			curSour*=sour[idx];
+			curBitter+=bitter[idx];
+			int result = Math.abs(curSour - curBitter);
 			
 			if(minDiff>result) {
 				minDiff = result;
-				System.out.println(result);
 			}
 			
-			combination(start+1);
+			combination(idx+1, curSour, curBitter);
+			curSour/=sour[idx];
+			curBitter-=bitter[idx];
 			
-			sourMul /= sour[idx];
-			bitterSum -= bitter[idx];
 		}
 	}
 }
