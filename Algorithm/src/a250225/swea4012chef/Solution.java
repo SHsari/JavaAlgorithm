@@ -21,18 +21,26 @@ import java.util.StringTokenizer;
  * 
  * N은 최대 16 이므로, 최대 재료 갯수는 8
  * 
+ * 발생할 수 있는 맛 시너지 최대값은 다음과 같다.
  * 20000 * 8 = 160000
+ * 
  * 
  */
 
 public class Solution {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder result = new StringBuilder();
+
+	// 순회할 배열 Synergy
 	static int[][] synergy;
 
+	// 결과값을 담는 MinDifference
 	static int minDifference;
 	static int N;
 	static int Ndiv2;
+
+	//첫번째 요리에 사용한 재료인지, 두번재 요리에 사용한 재료인지 구분하기 위한 배열
+	//Combination을 표시하는 배열이라 보아도 무방.
 	static boolean[] isDish1;
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
@@ -53,6 +61,9 @@ public class Solution {
 				for(int j=0; j<N; j++) {
 					int sij = Integer.parseInt(line.nextToken());
 					synergy[i][j] = sij;
+					
+					// 상단 역 피라미드를 유효하게 만들기.
+					if(i>j) synergy[j][i] += sij;
 				}
 			}
 			//1번 요리는 0번 재료를 무
@@ -80,8 +91,13 @@ public class Solution {
 		// dish2에 쓰기
 	}
 	
+
 	static void getSumAndUpdateMinValue() {
+
 		int dish1Score=0, dish2Score = 0;
+
+		// isDish1 boolean 배열을 순회하며
+		// 1, 2번 요리의 리스트에 재료 인덱스를 추가한다.
 		int[] dish2List = new int[Ndiv2];
 		int[] dish1List = new int[Ndiv2];
 		
@@ -92,20 +108,20 @@ public class Solution {
 			else dish1List[dish1Idx++]=idx;
 		}
 		
-		
+		// N/2 개의 재료들 중 2개를 뽑아 시너지 값을 얻어와야 한다.
+		// 간단히 이중포문을 사용하여 2개 인덱스 조합을 순회한다.
+		// 항상 first가 second보다 작다.
+		// dish List 에도 index가 오름차순으로 저장되어 있으므로 (조합 함수 특징)
+		// 항상 i가 j보다 작다.
  		for(int first=0; first<Ndiv2; first++) {
 			for(int second=first+1; second<Ndiv2; second++) {
 				int i1 = dish1List[first];
 				int j1 = dish1List[second];
 				dish1Score += synergy[i1][j1];
-				dish1Score += synergy[j1][i1];
 				
 				int i2 = dish2List[first];
 				int j2 = dish2List[second];
 				dish2Score += synergy[i2][j2];
-				dish2Score += synergy[j2][i2];
-				
-
 			}
 		}
 		

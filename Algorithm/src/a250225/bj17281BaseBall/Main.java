@@ -3,8 +3,6 @@ package a250225.bj17281BaseBall;
 import java.io.*;
 import java.util.StringTokenizer;
 
-import java.util.Arrays;
-
 public class Main {
 
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -51,8 +49,6 @@ public class Main {
 				playInning(inning);
 			}
 			
-			System.out.print(score);
-			System.out.println(" : " + Arrays.toString(eintaList));
 			
 			if(score>maxScore) {
 				maxScore = score;
@@ -95,6 +91,7 @@ public class Main {
 			//아웃이라면
 			if(tajaScore==0)  {
 				outCount ++;
+				roux --;
 			}
 			//성적을 냈다면
 			//정해진 타자 성적에 따라 
@@ -113,12 +110,11 @@ public class Main {
 	static void forward(int tajaScore) {
 		for(int i=0; i<tajaScore; i++) {
 			//진루
-			roux *=2;
+			roux *= 2;
 			//만약 3루에서 진루했다면 득점
 			score += roux / 16;
 			//득점한 주자 제거
 			roux %= 16;
 		}
-
 	}
 }
