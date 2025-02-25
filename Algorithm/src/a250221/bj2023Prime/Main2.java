@@ -18,9 +18,15 @@ public class Main2 {
 
     public static void main(String args[]) {
         N = sc.nextInt();
+        
+        if(N==8) {
+        	
+        }
+        
+        
         int limit = (int)(Math.pow(10, N/2));
 
-        isPrime = new Boolean[limit];ㄷㅇ
+        isPrime = new Boolean[limit];
         Arrays.fill(isPrime, true);
 
         eratosthenes(limit);
