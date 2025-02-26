@@ -1,5 +1,0 @@
-bin/*
-*.classpath
-*.projects
-*.DS_Store
-!src/*/*.java
