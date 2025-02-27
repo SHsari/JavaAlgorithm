@@ -1,0 +1,5 @@
+*.DS_store
+*.project
+*.classpath
+*.dSYM/
+bin/
