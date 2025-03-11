@@ -1,31 +1,9 @@
 package a250307.boj17135castleDefense;
 
 import java.io.*;
-/*
- * 맵의 길이 범위가 3<= N, M <= 15 이므로
- * 적이 한칸씩 이동할때와 같은 연산에서
- * 비트마스크를 쓰는 것이 가장 빠를 것 같습니다.
- * 
- * 비트 마스크를 사용하므로 다음과 같이 생각하겠습니다.
- * 
- * 적은 좌측에서 우측으로 한칸씩 이동.
- * 궁수들은 최우측에 배치.
- * 
- * 매 턴마다 궁수들이 죽일 적을 계산하여
- * 한번에 맵에 반영하고,
- * 
- * 적을 한칸씩 옮기는 일을 반복합니다.
- * 
- * 적이 맵에 없으면 해당 궁수 배치에 대한 kill 결과값을 확인하여
- * 최대 kill 값을 업데이트 합니다.
- * 
- * 
- * 
- * 
- */
 import java.util.Arrays;
 
-public class BOJ_17135_캐슬디펜스_송석현 {
+public class BOJ_17135_캐슬디펜스_송석현 {
 
     static BufferedReader br;
     static StreamTokenizer st;
