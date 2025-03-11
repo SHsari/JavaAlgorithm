@@ -3,8 +3,27 @@ package a250307.boj17135castleDefense;
 import java.io.*;
 import java.util.Arrays;
 
-public class BOJ_17135_캐슬디펜스_송석현 {
+/*
+ * 맵의 길이 범위가 3<= N, M <= 15 이므로
+ * 적이 한칸씩 이동할때와 같은 연산에서
+ * 비트마스크를 쓰는 것이 가장 빠를 것 같습니다.
+ * 
+ * 비트 마스크를 사용하므로 다음과 같이 생각하겠습니다.
+ * 
+ * 적은 좌측에서 우측으로 한칸씩 이동.
+ * 궁수들은 최우측에 배치.
+ * 
+ * 매 턴마다 궁수들이 죽일 적을 계산하여
+ * 한번에 맵에 반영하고,
+ * 
+ * 적을 한칸씩 옮기는 일을 반복합니다.
+ * 
+ * 적이 맵에 없으면 해당 궁수 배치에 대한 kill 결과값을 확인하여
+ * 최대 kill 값을 업데이트 합니다.
+ *
+ */
 
+public class Main {
     static BufferedReader br;
     static StreamTokenizer st;
 
@@ -27,9 +46,6 @@ public class BOJ_17135_캐슬디펜스_송석현 {
     static int enemyNumber;
     static int remainder;
     static int estimatedPossibleMaxKillNum;
-
-
-
 
     /*
      * 전체 적 세는 로직과
@@ -90,7 +106,6 @@ public class BOJ_17135_캐슬디펜스_송석현 {
         return killCount;
     }
 
-
     //궁수가 죽일 수 잇는 적의 범위 배열을 초기화해줍니다.
     static void setAttackRange() {
         ///0번부터 2번까지 궁수 순회
@@ -110,7 +125,6 @@ public class BOJ_17135_캐슬디펜스_송석현 {
         }
     }
 
-
     // 적이 한칸씩 이동하는 함수.
     // 동시에 적의 존재 여부틀 통해 게임의 끝 여부를 리턴합니다.
     static void enemyTurn() {
@@ -120,7 +134,6 @@ public class BOJ_17135_캐슬디펜스_송석현 {
             remainder += Integer.bitCount(bitmaskMap[line]);
         }
     }
-
 
     //비트마스크 연산이 익숙치 않아서 line과 lineIndex값으로 bitmaskMap에 접근 및 조작할 수 있도록 만든 함수입니다.
     private static boolean isEnemyAt(int encodedRC) {
@@ -134,7 +147,6 @@ public class BOJ_17135_캐슬디펜스_송석현 {
         int index = encodedRC % N;
         bitmaskMap[line] &= ~(1<<index);
     }
-
 
     // nextCombination 이네용..
     // 매번 다음 컴비네이션을 업데이트 합니다.
@@ -153,7 +165,6 @@ public class BOJ_17135_캐슬디펜스_송석현 {
             return true;
         } else return false;
     }
-
 
     // 초기화 및 입력 반영 함수
     static void init() throws IOException {
@@ -196,7 +207,6 @@ public class BOJ_17135_캐슬디펜스_송석현 {
             archerSet[i] = i;
         }
     }
-
 
     //디버깅을 위한 맵 프린트 함수
     static void print() {
