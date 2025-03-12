@@ -2,7 +2,6 @@ package a250304;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StreamTokenizer;
 
 
 /* 백준 쿼드트리.

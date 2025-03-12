@@ -2,23 +2,9 @@ package a250306.swea1868popping;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StreamTokenizer;
-
-import java.util.Queue;
 import java.util.ArrayDeque;
-/*SWEA 1868 파핑파핑 지뢰찾기
- * 
- * 컴퓨터의 입장에서 지뢰찾기 구현하기
- * -> 최소클릭으로 성공하는 시나리오 구하기
- * -> 최소클릭횟수 출력
- * 
- * 지뢰는 영역을 나눈다.
- * 영역의 갯수를 반환하는 문제이다.
- * -> BFS
- * 엄밀하게 따지고 보니 또 아니다.
- * 지뢰만이 문제가 아니다.
- */
 import java.util.Arrays;
+import java.util.Queue;
 
 /* SWEA1868 파핑파핑지뢰찾기
  * 

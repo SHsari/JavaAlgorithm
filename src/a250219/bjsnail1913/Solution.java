@@ -12,19 +12,20 @@ public class Solution {
 		Scanner sc = new Scanner(System.in);
 		int T = sc.nextInt();
 		for(int tc=1; tc<=T; tc++) {
-			sb.append("#" + tc + "\n");
+			sb.append("#").append(tc).append("\n");
 			int n = sc.nextInt();
 			solve(n);
 			
 			for(int i=0; i<n; i++) {
 				for(int j=0; j<n; j++) {
-					sb.append(map[i][j] + " ");
+					sb.append(map[i][j]).append(" ");
 				}
 				sb.append("\n");
 			}
 			
 		}
 		System.out.println(sb);
+		sc.close();
 	}
 	
 	static void solve(int n) { 
