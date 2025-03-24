@@ -1,4 +1,4 @@
-package personal;
+package personal.permutation;
 
 import java.io.*;
 import java.util.StringTokenizer;
