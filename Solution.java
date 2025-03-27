@@ -7,7 +7,7 @@ public class Solution {
 	static StreamTokenizer st;
 	static StringBuilder result;
 	
-	public static void main(String[] args) throws IOException {		
+	public static void main(String[] args) {		
 		br = new BufferedReader(new InputStreamReader(System.in));
         st = new StreamTokenizer(br);
         result = new StringBuilder();
@@ -25,8 +25,9 @@ public class Solution {
 	}
 
 	
-	static int nextInt() throws IOException {
-		st.nextToken();
+	static int nextInt() {
+		try { st.nextToken(); }
+		catch(IOException e) { e.printStackTrace(); }
 		return (int) st.nval;
 	}
 
