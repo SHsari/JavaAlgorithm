@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class Solution {
 	 *  
 	 * 2. 다른방법은 떠오르지 않어.
 	 */
-
+	
 	static BufferedReader br;
 	static StreamTokenizer st;
 	static StringBuilder result;
@@ -46,8 +47,8 @@ public class Solution {
 	}
 	
 	static class Stair {
-		int r, c, length, onTopCnt, onComingIdx, stairIdx;
-		List<Person> selected;
+		int r, c, length, stairIdx;
+		LinkedList<Integer> distance;
 		LinkedList<Integer> enterTime;
 		Stair(int idx, int row, int col, int len) {
 			this.stairIdx = idx;
@@ -55,53 +56,58 @@ public class Solution {
 			this.length = len;
 		}
 		void init() {
-			selected = new ArrayList<>();
+			distance = new LinkedList<>();
 			enterTime = new LinkedList<>();
-			onTopCnt=0;
-			onComingIdx=0;
+
 		}
 		
-		int simulate() {
-			System.out.println("stair "+ stairIdx);
+		int simulate() {			
+			//System.out.println("stair "+ stairIdx);
+			int peopleNum = distance.size();
+			
+			if(peopleNum == 0) return 0;
+			else if(distance.getLast() + length >= minEndTime) {
+				return Integer.MAX_VALUE;
+			}
+			
+			int onTopCnt=0;
 			int time = 0;
+			int didArrive =0;
 
-			while(onComingIdx < selected.size() || onTopCnt>0) {
+			while(didArrive != peopleNum) {
 				time++;
 				
-				while(onComingIdx<selected.size()){
-					Person p = selected.get(onComingIdx);
-					if(p.dist[stairIdx]<=time) {
+				//1. 이동중인 사람들 현황 업데이트
+				while(!distance.isEmpty()) {
+					if(distance.peek() <= time) {
 						onTopCnt++;
-						onComingIdx++;
+						distance.poll();
 					} else break;
 				}
 				
-				
-				while(!enterTime.isEmpty()){
-					int stairTime = time - enterTime.peek();
-					if(stairTime >= length) enterTime.poll();
-					else { break; }
+				//2. 계단위의 상태 업데이트
+				while(!enterTime.isEmpty()) {
+					if(time - enterTime.peek() == length) {
+						enterTime.poll();
+						didArrive++;
+					} else break;
 				}
 				
-				int qsize = enterTime.size();
-				
-				for(;qsize<3 && onTopCnt>0; qsize++, onTopCnt--) {
+				//3. 계단 꼭대기의 사람을 계단에 넣기
+				while(enterTime.size()<3 && onTopCnt>0) {
 					enterTime.add(time);
-				}
+					onTopCnt--;
+				}	
 				
-				StringBuilder sb = new StringBuilder();
-				sb.append("t: ").append(time).append(", qsize: ").append(qsize);
-				sb.append(", topCnt: ").append(onTopCnt).append(", onComing: ").append(onComingIdx);
-				sb.append(", realQ: ").append(enterTime.size());
-				System.out.println(sb);
 			}
+			//System.out.println(time + "sec");
 			
-			return enterTime.getLast() + length;
+			return ++time;
 		}
 	}
 	
 	
-	static int N, Time, peopleCnt;
+	static int N, Time, peopleCnt, minEndTime;
 	static int[][] map;
 	static Person[] people;
 	static Stair[] stairs;
@@ -116,11 +122,11 @@ public class Solution {
 			result.append("#").append(tc).append(" ");
 			
 			initAndGetInput();
-			int minEndTime = Integer.MAX_VALUE;
+			minEndTime = Integer.MAX_VALUE;
 			
 			int maxBitmask = 1 << peopleCnt;
 			for(int bitmask=0; bitmask<maxBitmask; bitmask++) {
-				System.out.println("on Bitmask: " + bitmask);
+				//System.out.println("on Bitmask: " + bitmask);
 				initStairs(bitmask);
 				int endTime = Math.max(stairs[0].simulate(), stairs[1].simulate());
 				if(endTime<minEndTime) minEndTime = endTime;
@@ -139,13 +145,12 @@ public class Solution {
 		for(int i=0; i<peopleCnt; i++) {
 			// i번째 사람이 들어갈 계단 index
 			int stairIdx = (bitmask & 1<<i) == 0 ? 0 : 1;
-			stairs[stairIdx].selected.add(people[i]);
+			stairs[stairIdx].distance.add(people[i].dist[stairIdx]);
 		}
 		
-		stairs[0].selected.sort((a,b) -> a.dist[0] - b.dist[0]);
-		stairs[1].selected.sort((a,b) -> a.dist[1] - b.dist[1]);
+		Collections.sort(stairs[0].distance);
+		Collections.sort(stairs[1].distance);
 	}
-	
 	
 	static void initAndGetInput() {
 		peopleCnt =0;
