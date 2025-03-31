@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class Solution {
+public class SWEA_2383_점심식사시간_송석현 {
 	/*
 	 * swea 2383 점심식사시간
 	 * N*N의 맵이 주어진다.
@@ -32,6 +32,8 @@ public class Solution {
 	 *  - 부분집합으로 푼다. 최대 2^10 * 평균시간.
 	 *  
 	 * 2. 다른방법은 떠오르지 않어.
+	 * 
+	 * 
 	 */
 	
 	static BufferedReader br;
@@ -46,7 +48,10 @@ public class Solution {
 		}
 	}
 	
+	// 로직 생각하느라 
 	static class Stair {
+		// 시뮬레이션을 위해 sort가 되는 Queue가 필요했습니다.
+		// -> linkedList 사용했습니다.
 		int r, c, length, stairIdx;
 		LinkedList<Integer> distance;
 		LinkedList<Integer> enterTime;
@@ -55,17 +60,21 @@ public class Solution {
 			this.r = row; this.c = col;
 			this.length = len;
 		}
+		
 		void init() {
 			distance = new LinkedList<>();
 			enterTime = new LinkedList<>();
-
 		}
 		
 		int simulate() {			
-			//System.out.println("stair "+ stairIdx);
+			
+			// 현재 계단을 이용해 내려갈 사람들의 수
 			int peopleNum = distance.size();
 			
+			// 사람이 없다면 바로 0 리턴
 			if(peopleNum == 0) return 0;
+			// 가장 멀리있는 사람으로부터 가능한 최소시간을 예측합니다.
+			// 업데이트가 불가능할 경우 탐색을 하지 않습니다.
 			else if(distance.getLast() + length >= minEndTime) {
 				return Integer.MAX_VALUE;
 			}
@@ -124,10 +133,12 @@ public class Solution {
 			initAndGetInput();
 			minEndTime = Integer.MAX_VALUE;
 			
+			// 비트마스크를 이용해서 계단 1번과 2번에 들어갈 사람들을 나누었습니다.
 			int maxBitmask = 1 << peopleCnt;
 			for(int bitmask=0; bitmask<maxBitmask; bitmask++) {
 				//System.out.println("on Bitmask: " + bitmask);
 				initStairs(bitmask);
+				// 계단 1번과 2번을 시뮬레이션 하여 나온 결과 중 큰 값이 총 걸린 시간입니다.
 				int endTime = Math.max(stairs[0].simulate(), stairs[1].simulate());
 				if(endTime<minEndTime) minEndTime = endTime;
 				
@@ -139,6 +150,7 @@ public class Solution {
 	}
 	
 	static void initStairs(int bitmask) {
+		// 비트마스크를 이용해 계단에 사람들을 나눕니다.
 		stairs[0].init();
 		stairs[1].init();
 		
@@ -153,6 +165,7 @@ public class Solution {
 	}
 	
 	static void initAndGetInput() {
+		/// 입력받는 함수.
 		peopleCnt =0;
 		people = new Person[10];
 		stairs = new Stair[2];
@@ -178,6 +191,7 @@ public class Solution {
 		}
 	}
 
+	//맨하탄 거리 구하는 함수.
 	static int getManhattan(int x1, int y1, int x2, int y2) {
 		return Math.abs(x1-x2) + Math.abs(y1-y2);
 	}
