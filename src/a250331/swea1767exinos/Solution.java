@@ -32,7 +32,6 @@ public class Solution {
 	 * Point의 Set을 적극적으로 사용했습니다.
 	 * 이미 도선이 놓인 경로에 대해서
 	 * Set<Point> pathSum 으로 관리했습니다.
-	 * 
 	 */
 
 	static BufferedReader br;
@@ -57,9 +56,9 @@ public class Solution {
         int T = nextInt();
 		for(int tc=1; tc<=T; tc++) {
 			result.append("#").append(tc).append(" ");
-			
+			//입력받고
 			init();
-			
+			// 탐색하기.
 			dfs(0, 0);
 			
 			result.append(minLength).append("\n");
@@ -68,6 +67,10 @@ public class Solution {
 	}
 	
 	static void dfs(int coreIdx, int connectedCore) {
+		// coreIdx 는 depth가 됩니다.
+		// 각 core의 4방중 어느 방향으로 연결할 지 탐색합니다.
+
+		//모든 코어를 순회했을 때 (기저조건)
 		if(coreIdx == coreNum) {
 			if(connectedCore>maxConnected) {
 				maxConnected = connectedCore;
@@ -78,6 +81,7 @@ public class Solution {
 			return;
 		}
 		
+		// 지금부터 모든 코어의 연결을 성공했을 때, 예상 연결 코어의 갯수입니다.
 		int maxEstimated = connectedCore + (coreNum - coreIdx);
 		
 		for(int dir=0; dir<4; dir++) {
@@ -88,13 +92,18 @@ public class Solution {
 				dfs(coreIdx+1, connectedCore+1);
 				pathSum.removeAll(path);
 			} 
-			// 현재 코어를 사용 할수 없음이 결정되었기 때문에 maxEstimated-1 해준다.
+			// 현재의 방향에서 코어를 사용 할수 없음이 결정되었기 때문에 maxEstimated-1 해준다.
 			else if(maxConnected <= maxEstimated-1) {
 				dfs(coreIdx+1, connectedCore);
 			}
 		}
 	}
 	
+	//코어의 위치 p, 연결 방향 dir을 받아서 해당 방향으로
+	// 연결이 가능한지 확인하는 함수입니다.
+	// 연결이 가능할 경우
+	// 경로에 존재하는 좌표들의 List를 반환합니다.
+	// 불가능한 경우 null 반환
 	static List<Point> getPath(Point p, int dir) {
 		int dr = dRow[dir];
 		int dc = dCol[dir];
@@ -105,6 +114,7 @@ public class Solution {
 		List<Point> path = new ArrayList<>();
 		while(map[r][c] == 0) {
 			Point cur = new Point(r,c);
+			//pathSum (Set)을 통해 이미 도선이 연결된 경로인지 확인합니다.
 			if(pathSum.contains(cur)) {
 				return null;
 			} else {
