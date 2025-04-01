@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 
-public class SWEA_2383_점심식사시간_송석현 {
+public class Solution {
 	/*
 	 * swea 2383 점심식사시간
 	 * N*N의 맵이 주어진다.

@@ -8,8 +8,8 @@ public class Solution {
     /*
      * SWEA 1251 하나로 Kruskal
      * 
-     * N개의 노드가 주어질 때,
-     * 최대 간선 그래프로부터
+     * N개의 노드, 각 노드의 좌표가 주어질때
+     * 최대 밀도의 간선으로 이뤄진 그래프로부터
      * Minimum spanning Tree를 완성해라.
      *
      * 간선 밀도가 높기 때문에 kruskal 보다 Prim이 나을 것 같습니다.

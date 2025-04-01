@@ -47,7 +47,7 @@ public class PrimMST {
 			
 			//
 			for(int i=0; i<V; i++) {
-				if(visited[i] 
+				if(!visited[i] 
 						&& adjMatrix[minVertex][i] != 0
 						&& minEdge[i] > adjMatrix[minVertex][i]) {
 					minEdge[i] = adjMatrix[minVertex][i];
