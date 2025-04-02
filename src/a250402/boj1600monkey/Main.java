@@ -25,6 +25,17 @@ public class Main {
 	 * 
 	 * 아니 jump는 최대로 많이하는게 좋은건데..
 	 * 이걸 어떻게 해야돼 정말로..??
+	 * 
+	 * jump를 최대한 많이 하고 싶다는 생각 때문에
+	 * Dijkstra 같은 greedy한 부분이 있는 알고리즘을 생각했으나
+	 * 결국 특정 순간에 jump하지 않으면 (jump를 아껴놓지 않고 초반에 다 소모하면,)
+	 * 목적지에 도착할 수 없는 경우가 있어서 모든 좌표에 대해서 가능한 모든 jump의 횟수까지
+	 * 탐색해야 합니다. 
+	 * 
+	 * [row][column][jump] 3차원 공간에 대한 완전 탐색으로 풀수 있다고 합니다.
+	 * 저는 Dijkstra를 쓰려고 했는데요, PriorityQueue 등 사용 시도 했으나
+	 * 결국 위의 3차원 공간상에서는 모든 이동이 비용이 1 이므로 BFS가 가능하다고 합니다.
+	 * 결국 Jump 횟수를 공간으로 보지 않는 고정관념으로 인해 함정에 빠진 것 같네요.
 	 */
 	
 	// 상태를 나타내는 class Point
@@ -94,7 +105,7 @@ public class Main {
 		isWall[r][c][jump] = true;
 		
 		int nextExp = expanse[r][c][jump] + 1;
-		
+		// 점프가 가능하다면 점프를 하는 경우 탐색.
 		if(jump<jumpLimit) {
 			int nextJump = jump+1;
 			for(int dir=0; dir<8; dir++) {
@@ -108,7 +119,7 @@ public class Main {
 				}
 			}
 		}
-		
+		// 점프를 하지 않는 경우
 		for(int dir=0; dir<4; dir++) {
 			int nextR = r + dRow4[dir];
 			int nextC = c + dCol4[dir];
