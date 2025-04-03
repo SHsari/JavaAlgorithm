@@ -5,7 +5,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 
-public class Solution {
+public class Main {
+	
+	/*
+	 * SWEA 1952 수영장 문제.
+	 * 처음 풀때 DP로 풀었습니다.
+	 * 
+	 * 일단 매달의 
+	 * 3달금액이 복병입니다 증말루.
+	 * 
+	 */
 	
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StreamTokenizer st = new StreamTokenizer(br);
@@ -14,7 +23,7 @@ public class Solution {
 	static int[] price = new int[4];
 	static int[] monthPlan = new int[12];
 	static int[] monthPrice = new int[12];
-	static final int DAY =0, MONTH=1, QUARTER=2, YEAR=3;
+	static final int DAY=0, MONTH=1, QUARTER=2, YEAR=3;
 	
 	public static void main(String[] args) throws IOException {
 		int T = nextInt();
@@ -42,17 +51,17 @@ public class Solution {
 			int[] priceDP = new int[12];
 			
 			// 초기화
-			priceDP[0] = monthPrice[0];
-			priceDP[1] = priceDP[0] + monthPrice[1];
+			priceDP[0] = monthPrice[0];// 첫달에 대한 최솟값
+			priceDP[1] = priceDP[0] + monthPrice[1]; // 둘째 달 까지의 최솟값
+			 // 셋째 달 까지의 최솟값.
 			priceDP[2] = Math.min(price[QUARTER], priceDP[1]+monthPrice[2]);
 	
 			// dp 순회
 			for(int mon=3; mon<12; mon++) {
 				
-				//1. 현재달 싱글
-				//2. 최근 3달 쿼터 
-				 
+				//1. 최근 3달을 쿼터금액으로 결제할 때,
 				int a = priceDP[mon-3] + price[QUARTER];
+				//2. 현재달을 월별 금액으로 결제할 때
 				int b = priceDP[mon-1] + monthPrice[mon];
 				priceDP[mon] = Math.min(a, b);
 			}

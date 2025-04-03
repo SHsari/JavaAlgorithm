@@ -51,8 +51,9 @@ public class Solution {
              
             utilities = new int[N];
             calories = new int[N];
-            //단순 입력을 위한 For문
-            //N개의 utility, Calorie 쌍을 입력받는다.
+            
+            // 단순 입력을 위한 For문
+            // N개의 utility, Calorie 쌍을 입력받는다.
             for(int i=0; i<N; i++) {
                 StringTokenizer ucPair = new StringTokenizer(br.readLine());
                 utilities[i] = Integer.parseInt(ucPair.nextToken());
@@ -61,8 +62,6 @@ public class Solution {
                 remUtil += utilities[i];
             }
             // 입력 완료
- 
- 
             // 재료를 다 넣어도 제한값을 만족한다면.
             if(remCal < MAXCAL) {
                 sb.append("#" + tc + " ");
@@ -94,7 +93,6 @@ public class Solution {
     // 조합을 사용해서 풀기.
     // index 0부터 재료를 순회하면서 사용할 때, 하지 않을 때에 따라 분기한다.
     // pruning을 적극적으로 써보자.
- 
  
     // false return시 더 이상 탐색할 필요가 없음
     // true return시 일반적으로 진행한다.
