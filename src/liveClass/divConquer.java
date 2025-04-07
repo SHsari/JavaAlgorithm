@@ -1,4 +1,4 @@
-package a250304;
+package liveClass;
 
 import java.util.Scanner;
 

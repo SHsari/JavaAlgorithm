@@ -1,0 +1,7 @@
+.metadata/**/*
+bin/**/*
+**/.DS_Store
+/bin/
+**/*vscode
+.classpath
+.project
