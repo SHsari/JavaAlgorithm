@@ -2,6 +2,7 @@ package a250221.bj12891DNAPW;
 
 import java.io.*;
 import java.util.StringTokenizer;
+import java.util.HashMap;
 import java.util.Map;
 /*
  * S: 주어지는 문자열의 길이
@@ -18,7 +19,14 @@ public class Main {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
 	static int S, P;
-	static final Map<Character, Integer> DNAIDX = Map.of('A', 0, 'C', 1, 'G', 2, 'T', 3);
+	static final Map<Character, Integer> DNAIDX;
+	static {
+		DNAIDX = new HashMap<>();
+		DNAIDX.put('A', 0);
+		DNAIDX.put('C', 1);
+		DNAIDX.put('G', 2);
+		DNAIDX.put('T', 3);
+	}
 	
 	// 누적합 저장할 배열
 	static int[][] dnaCount;
