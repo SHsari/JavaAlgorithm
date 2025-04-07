@@ -1,4 +1,4 @@
-package a250403.swea5215hamburger;
+package personal.swea5215hamburger_knapsack_summary;
 
 import java.io.BufferedReader;
 import java.io.IOException;
