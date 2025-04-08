@@ -41,7 +41,7 @@ public class Main {
 
 	}
 	
-	private static int getListAt(int row, int col) {
+	private static int getCandidateAt(int row, int col) {
 		
 	}
 	
