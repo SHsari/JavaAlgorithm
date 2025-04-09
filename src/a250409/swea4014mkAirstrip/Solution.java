@@ -8,6 +8,15 @@ import java.util.Arrays;
 
 
 public class Solution {
+	/* swea4014	 활주로 건설
+	 * 
+	 * map이 주어지면,
+	 * 각 row,column이 충분히 평탄한지 확인합니다.
+	 * 
+	 * 모든 Row와 column에 대하여 완전탐색 했으며
+	 * 시간복잡도는 O(N^2 (*X)) 정도.. 로 보입니다.
+	 * 
+	 */
 
 	static BufferedReader br;
 	static StreamTokenizer st;
@@ -50,7 +59,10 @@ public class Solution {
 			int curCol = 1;
 			for(; curCol<N; curCol++) {
 				
+				// 높이차이 계산
 				int diff = map[r][curCol] - map[r][curCol-1];
+				
+				// 평탄하면 바로 다음 확인
 				if(diff == 0) continue;
 				
 				// 우상향하는 것을 놓아야 할 때.
@@ -80,7 +92,7 @@ public class Solution {
 					// 확인했더니 가능한 경우
 					if(endCol == curCol) {
 						Arrays.fill(occupied,  curCol, curCol+X, true);
-						curCol+=X;
+						curCol+=(X-1);
 					}
 					// 불가능시 버리기.
 					else break;
@@ -90,7 +102,7 @@ public class Solution {
 				else break;	
 			}
 			// 순회 후 활주로 건설이 가능한 경우
-			if(curCol >= N) {
+			if(curCol == N) {
 				
 
 				count ++;
@@ -109,9 +121,9 @@ public class Solution {
 				int diff = map[curRow][c] - map[curRow-1][c];
 				if(diff == 0) continue;
 				
-				// 우상향하는 것을 놓아야 할 때.
+				// 위쪽으로 경사로를 놓아야 할 때,
 				if(diff == 1) {
-					//가장 좌측 자리부터 확인
+					//가장 위쪽 자리부터 확인
 					int stRow = curRow-X;
 					if(stRow >= 0 && !occupied[stRow]) {
 						while(map[stRow][c] == map[curRow-1][c] && stRow < curRow) {
@@ -123,9 +135,9 @@ public class Solution {
 					// 불가능시 버리기
 					else break;
 				}
-				// 좌상향 하는 것을 놓아야 할 때.
+				// 아래쪽으로 경사로를 놓아야 할 때,
 				else if (diff == -1){
-					// 가장 우측 자리부터 확인
+					// 가장 아래쪽 자리부터 확인
 					int endRow = curRow+X-1;
 					if(endRow < N) {
 						while(map[endRow][c] == map[curRow][c] && endRow > curRow) {
@@ -135,7 +147,7 @@ public class Solution {
 					// 확인했더니 가능한 경우
 					if(endRow == curRow) {
 						Arrays.fill(occupied,  curRow, curRow+X, true);
-						curRow += X;
+						curRow += (X-1);
 					}
 					// 불가능시 버리기.
 					else break;
@@ -145,7 +157,7 @@ public class Solution {
 				else break;	
 			}
 			// 순회 후 활주로 건설이 가능한 경우
-			if(curRow >= N) {
+			if(curRow == N) {
 				count ++;
 			}
 		}
