@@ -1,4 +1,4 @@
-package a250408.boj2239sudoku;
+package a250408.boj2580sudoku;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,15 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Main {
-	/* boj 2239 스도쿠
+	/* boj 2580 스도쿠
 	 * 
-	 * 결론적으로 오답인데, 그 이유가.
-	 * 최소 조건을 만족하지 않아서 인것으로 보임.
-	 * 
-	 * 특정위치에 대해 후보 숫자를 순서대로 순회하기 전에,
-	 * 최소후보를 가진 위치를 고르는 작업이 우선되는데
-	 * 
-	 * 위의 과정때문에 최소 숫자 조건을 만족하지 못하는 것으로 보인다.
+	 * 성공햇다.
 	 */
 	
 	// 스도쿠 퍼즐에서 하나의 좌표를 표현하는 클래스
@@ -82,7 +76,7 @@ public class Main {
 		StringBuilder sb = new StringBuilder();
 		for(int r=0; r<9; r++) {
 			for(int c=0; c<9; c++) {
-				sb.append(map[r][c]);
+				sb.append(map[r][c]).append(" ");
 			}
 			sb.append("\n");
 		}
@@ -148,7 +142,8 @@ public class Main {
 
 	static void init() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+        StreamTokenizer st = new StreamTokenizer(br);
+        
         map = new int[9][9];
         ver = new boolean[9][10];
         hor = new boolean[9][10];
@@ -157,14 +152,14 @@ public class Main {
         	ver[i][0] = hor[i][0] = block[i][0] = true; 	
         
         for(int r=0; r<9; r++) {
-        	char[] row = br.readLine().toCharArray();
         	for(int c=0; c<9; c++) {
-        		if(row[c] == '0') {
+        		st.nextToken();
+        		int num = (int) st.nval;
+        		if(num == 0) {
         			coordinates.add(new Coordinate(r,c));
         			continue;
         		} else {
-        			int value = row[c] - '0';
-        			put(r,c,value);
+        			put(r,c,num);
         		}
         	}
         }
