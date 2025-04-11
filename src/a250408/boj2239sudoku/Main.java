@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 
 public class Main {
 	/* boj 2239 스도쿠
@@ -43,22 +45,6 @@ public class Main {
 			return candidate;
 		}
 		
-		// 후보의 갯수를 반환.
-		private int getCandidateNum() {
-			int count=0;
-			for(int i=1; i<=9; i++) {
-				if(!verHas[i] && !horHas[i] && !blockHas[i])
-					count++;
-			}
-			return count;
-		}
-		
-		//후보의 갯수가 가장 적은 것을 찾아내기 위한 compareTo
-		@Override
-		public int compareTo(Coordinate o) {
-			return this.getCandidateNum()- o.getCandidateNum();
-		}
-		
 		@Override
 		public String toString() {
 			return "[" + row + ", " + col + "]";
@@ -68,7 +54,7 @@ public class Main {
 	static int[][] map;
 	static boolean[][] ver, hor, block;
 	
-	static List<Coordinate> coordinates = new ArrayList<>();
+	static Queue<Coordinate> coordinates = new ArrayDeque<>();
 	
 	public static void main(String[] args) throws IOException {
 		init();
@@ -94,24 +80,22 @@ public class Main {
 		
 		// dfs backtracking 시 이번 depth의 설정을 rollback 하기 위한
 		// updated Coordinate list
-		List<Coordinate> updated = new ArrayList<>();
+		Queue<Coordinate> updated = new ArrayDeque<>();
 		
 		// 후보의 갯수가 가장 적은 것.
-		Coordinate coor = Collections.min(coordinates);
+		Coordinate coor = coordinates.poll();
 	
 		List<Integer> candidates = coor.getCandidateList();
 		while(candidates.size()==1) {
 			
 			put(coor.row, coor.col, candidates.get(0));
-			coordinates.remove(coor);
 			updated.add(coor);
 			
 			if(coordinates.isEmpty()) return true;
-			coor = Collections.min(coordinates);
+			coor = coordinates.poll();
 			candidates = coor.getCandidateList();
 		}
 		if(candidates.size()>1) {
-			coordinates.remove(coor);
 			for(int canNum : candidates) {
 				put(coor.row, coor.col, canNum);
 				if(dfs()) return true;
@@ -123,7 +107,8 @@ public class Main {
 		for(Coordinate rbCoor : updated) {
 			rollback(rbCoor.row, rbCoor.col);
 		}
-		coordinates.addAll(updated);
+		updated.addAll(coordinates);
+		coordinates = updated;
 		return false;
 	}
 	
