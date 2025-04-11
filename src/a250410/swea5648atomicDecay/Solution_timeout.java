@@ -128,8 +128,8 @@ public class Solution_timeout {
 		
 		for(int i=0; i<atomNum; i++) {
 			int x, y, dir, e;
-			x = nextInt();
-			y = nextInt();
+			x = nextInt() *2;
+			y = nextInt() *2;
 			dir = nextInt();
 			e = nextInt();
 			new Atom(x, y, dir, e);
