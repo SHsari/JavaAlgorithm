@@ -23,7 +23,7 @@ public class Main {
 	 */
 	
 	// 스도쿠 퍼즐에서 하나의 좌표를 표현하는 클래스
-	static class Coordinate implements Comparable<Coordinate> {
+	static class Coordinate {
 		int row, col; // 좌표의 row, column
 		// 각 좌표가 소속된 row, column, block의 숫자 사용 현황
 		boolean[] horHas, verHas, blockHas;
