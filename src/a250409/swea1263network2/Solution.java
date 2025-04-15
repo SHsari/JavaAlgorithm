@@ -1,6 +1,5 @@
-package a250409.swea1263network;
+package a250409.swea1263network2;
 import java.io.*;
-import java.util.Arrays;
 
 
 public class Solution {
@@ -42,6 +41,7 @@ public class Solution {
 				}
 			}
 			
+			// 최소거리를 반환
 			int minSum = Integer.MAX_VALUE; 
 			for(int i=0; i<N; i++) {
 				int sum = 0;
