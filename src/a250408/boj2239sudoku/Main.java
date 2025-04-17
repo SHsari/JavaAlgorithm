@@ -3,132 +3,132 @@ package a250408.boj2239sudoku;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StreamTokenizer;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Queue;
+
 
 public class Main {
+
 	/* boj 2239 스도쿠
 	 * 
-	 * 결론적으로 오답인데, 그 이유가.
-	 * 최소 조건을 만족하지 않아서 인것으로 보임.
+	 * 1. 인풋을 받아서 unfilledR, unfilledC 배열에 채워지지 않은 부분의 row, col을 순서대로 저장
 	 * 
-	 * 특정위치에 대해 후보 숫자를 순서대로 순회하기 전에,
-	 * 최소후보를 가진 위치를 고르는 작업이 우선되는데
+	 * 2. 다음은 숫자의 현황을 확인할 수 있는 boolean 배열에 대한 명시입니다.
+	 * 	2-1  vertical[column번호][숫자] 를 통해서 해당 새로줄에 숫자가 존재하는지 판단
+	 *  2-2  horizontal[row번호][숫자] 를 통해서 해당 가로줄에 숫자가 존재하는지 판단
+	 *  2-3  blockOf(row, column)은 boolean 배열을 반환,
+	 * 		역시 blockOf(row, column)[숫자] 를 통해 해당 3x3블럭에 숫자가 존재하는 지 판단.
 	 * 
-	 * 위의 과정때문에 최소 숫자 조건을 만족하지 못하는 것으로 보인다.
+	 * 3. getCandidatesOf(row, column)은 해당 좌표에 들어갈 수 있는 모든 숫자후보를 반환.
+	 * 		3-1. 숫자 1~9를 순회하며 2번에 명시한 배열을 이용해 들어갈 수 있는 숫자인 지 판단하고 후보 배열로 반환.
+	 * 
+	 * 4. 왼쪽 위 부터 순서대로 모든 가능성에 대해 순회하고 모든 숫자를 채우면 정지.
+	 * 		4-1. dfs로 unfilled 배열을 순회.
+	 * 		4-2. 3번을 이용해서 해당 unfilled 좌표에 대해서 후보를 받음
+	 * 		4-3. 후보가 1개라면 바로 집어넣고 다음 좌표에 대해 4-2번 반복
+	 * 		4-4. 후보가 여러개라면 해당 후보를 순회하는데,
+	 * 			4-4-1. 넣어보고 다음 좌표에 대해서 재귀호출
+	 * 				재귀호출에 대한 반환값이 false이면 rollback 하고 다음 후보 test.
+	 * 		
+	 * 		4-5. 모든 후보를 test한 결과가 false 거나 현 좌표에 대한 후보가 없다면
+	 * 			4-5-1. 현재 재귀깊이에서 채운 모든 좌표를 다시 되돌리기.
+	 * 			4-5-2. false 반환.
 	 */
-	
-	// 스도쿠 퍼즐에서 하나의 좌표를 표현하는 클래스
-	static class Coordinate {
-		int row, col; // 좌표의 row, column
-		// 각 좌표가 소속된 row, column, block의 숫자 사용 현황
-		boolean[] horHas, verHas, blockHas;
-		
-		Coordinate(int row, int col) {
-			this.row = row; this.col = col;
-			horHas = hor[row];
-			verHas = ver[col];
-			blockHas = block[blockOf(row,col)];
-		}
-		
-		//후보의 리스트를 반환
-		public List<Integer> getCandidateList() {
-			List<Integer> candidate = new ArrayList<>();	
-			for(int i=1; i<=9; i++) {
-				if(!verHas[i] && !horHas[i] && !blockHas[i])
-					candidate.add(i);
-			}
-			return candidate;
-		}
-		
-		@Override
-		public String toString() {
-			return "[" + row + ", " + col + "]";
-		}
-	}
 
 	static int[][] map;
 	static boolean[][] ver, hor, block;
-	
-	static Queue<Coordinate> coordinates = new ArrayDeque<>();
-	
+	static int[] unfilledR;
+	static int[] unfilledC;
+	static int unfilledCnt;
+
 	public static void main(String[] args) throws IOException {
 		init();
-		
-		dfs();
+
+		if(!dfs(0)) {
+			System.out.println(-1);
+			return;
+		}
 
 		printMap();
 	}
 	
-	public static void printMap() {
-		StringBuilder sb = new StringBuilder();
-		for(int r=0; r<9; r++) {
-			for(int c=0; c<9; c++) {
-				sb.append(map[r][c]);
-			}
-			sb.append("\n");
-		}
-		System.out.println(sb);
-	}
-	
-	public static boolean dfs() {
-		if(coordinates.isEmpty()) return true;
+	public static boolean dfs(int startIdx) {
+		// 채워지지 않은 모든 좌표를 다 채웠다면,
+		if(startIdx == unfilledCnt) return true;
 		
-		// dfs backtracking 시 이번 depth의 설정을 rollback 하기 위한
-		// updated Coordinate list
-		Queue<Coordinate> updated = new ArrayDeque<>();
+		// 초기 셋팅 -> 좌표 가져오기 -> 좌표에 대한 후보 가져오기.
+		int nextIdx = startIdx;
+		int row = unfilledR[nextIdx];
+		int col = unfilledC[nextIdx];
+		int[] candi = getCandidatesAt(row, col) ;
+		int candiNum = candi[9];
+		//System.out.println("candiNum :" + candiNum+ ", arr: " + Arrays.toString(candi));
 		
-		// 후보의 갯수가 가장 적은 것.
-		Coordinate coor = coordinates.poll();
-	
-		List<Integer> candidates = coor.getCandidateList();
-		while(candidates.size()==1) {
+		// 후보가 하나이면 추가 재귀 없이 바로 해결 후
+		// 다음 좌표에 대한 후보를 받아오기를 반복.
+		while(candiNum == 1) {
+			put(row, col, candi[0]);
+
+			if(++nextIdx == unfilledCnt)
+				return true;
 			
-			put(coor.row, coor.col, candidates.get(0));
-			updated.add(coor);
-			
-			if(coordinates.isEmpty()) return true;
-			coor = coordinates.poll();
-			candidates = coor.getCandidateList();
-		}
-		if(candidates.size()>1) {
-			for(int canNum : candidates) {
-				put(coor.row, coor.col, canNum);
-				if(dfs()) return true;
-				else rollback(coor.row, coor.col);
-			}
-			coordinates.add(coor);
+			row = unfilledR[nextIdx];
+			col = unfilledC[nextIdx];
+			candi = getCandidatesAt(row, col);
+			candiNum = candi[9];
 		}
 		
-		for(Coordinate rbCoor : updated) {
-			rollback(rbCoor.row, rbCoor.col);
+		// 후보가 많으면
+		if(candiNum > 1) {
+			for(int idx=0; idx<candiNum; idx++) {
+				put(row, col, candi[idx]);
+				if(dfs(nextIdx+1))
+					return true;
+				else rollback(row, col);
+			}
 		}
-		updated.addAll(coordinates);
-		coordinates = updated;
+
+		// 후보가 없거나, 모든 후보를 시도해봐도 답이 없을 때,
+		// 현 함수에서 채워놓은 모든 좌표를 돌려놓음.
+		for(int rollBackIdx = startIdx; rollBackIdx < nextIdx; rollBackIdx ++)
+			rollback(unfilledR[rollBackIdx], unfilledC[rollBackIdx]);
+
 		return false;
 	}
-	
-	static void rollback(int row, int col) {
-		int num = map[row][col];
-		map[row][col] =0;
-		ver[col][num] = false;
-		hor[row][num] = false;
-		block[blockOf(row,col)][num] = false;
+
+	// 숫자가 작은 순서대로 후보를 반환하는 함수.
+	static int[] getCandidatesAt(int row, int col) {
+		// candidates[9] 은 후보의 갯수로 하자.
+		int candidates[] = new int[10];
+		int candiIdx = 0;
+		boolean currBlock[] = blockOf(row, col); 
+
+		for(int i=1; i<=9; i++)
+			if( !ver[col][i] && !hor[row][i] &&	!currBlock[i] )
+				candidates[candiIdx++] = i;
+
+		candidates[9] = candiIdx;
+		return candidates;
 	}
 	
+	// 집어넣었던 숫자를 다시 취소하기.
+	static void rollback(int row, int col) {
+		int num = map[row][col];
+		map[row][col] = 0;
+		ver[col][num] = false;
+		hor[row][num] = false;
+		blockOf(row,col)[num] = false;
+	}
+	
+	//숫자를 해당 좌표에 집어넣기.
 	static void put(int row, int col, int num) {
 		map[row][col] = num;
 		ver[col][num] = true;
 		hor[row][num] = true;
-		block[blockOf(row, col)][num] = true;
+		blockOf(row, col)[num] = true;
 	}
 	
-	private static int blockOf(int row, int col) {
-		return (row/3) * 3 + col/3;
+	// 해당 좌표가 속한 block을 반환
+	private static boolean[] blockOf(int row, int col) {
+		return block[(row/3) * 3 + col/3];
 	}
 
 	static void init() throws IOException {
@@ -138,20 +138,35 @@ public class Main {
         ver = new boolean[9][10];
         hor = new boolean[9][10];
         block = new boolean[9][10];
+
+		unfilledCnt = 0;
+		unfilledR = new int[81];
+		unfilledC = new int[81];
+
         for(int i=0; i<9; i++) 
         	ver[i][0] = hor[i][0] = block[i][0] = true; 	
         
         for(int r=0; r<9; r++) {
         	char[] row = br.readLine().toCharArray();
         	for(int c=0; c<9; c++) {
-        		if(row[c] == '0') {
-        			coordinates.add(new Coordinate(r,c));
-        			continue;
-        		} else {
-        			int value = row[c] - '0';
-        			put(r,c,value);
-        		}
+				int value = row[c] - '0';
+				if(value == 0) {
+					unfilledR[unfilledCnt] = r;
+					unfilledC[unfilledCnt++] = c;
+				}
+				else put(r, c, value);
         	}
         }
+	}
+
+	public static void printMap() {
+		StringBuilder sb = new StringBuilder();
+		for(int r=0; r<9; r++) {
+			for(int c=0; c<9; c++) {
+				sb.append(map[r][c]);
+			}
+			sb.append("\n");
+		}
+		System.out.println(sb);
 	}
 }
